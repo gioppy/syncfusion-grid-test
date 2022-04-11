@@ -1,0 +1,52 @@
+<ejs-grid
+  #grid
+  [dataSource]="table.rows"
+  [allowSorting]="table.settings.sorting"
+  [allowFiltering]="allowFiltering"
+  [filterSettings]="filterSettings"
+  [allowGrouping]="allowGrouping"
+  [allowPaging]="allowPaging"
+  [pageSettings]="pageSettings"
+  [toolbar]="table.settings.toolbar"
+  [contextMenuItems]="contextMenuItems"
+  (contextMenuClick)="handleContextMenu($event)"
+  (recordClick)="handleRowClick($event)"
+  class="grid">
+  <e-columns>
+    <e-column
+      *ngFor="let column of table.settings.columns"
+      [field]="column.name"
+      [headerText]="column.label"
+      [allowSorting]="column.allow_sorting"
+      [allowFiltering]="column.allow_filtering">
+      <div [ngSwitch]="column.component">
+        <ng-template *ngSwitchCase="'favorite'" #template let-data>
+          <button type="button" (click)="handleFavorite(data)">
+            <app-favorite [selected]="data[column.name]"></app-favorite>
+          </button>
+        </ng-template>
+        <ng-template *ngSwitchCase="'tag'" #template let-data>
+          <app-tag [content]="data[column.name]"></app-tag>
+        </ng-template>
+        <ng-template *ngSwitchCase="'status'" #template let-data>
+          <app-status *ngIf="data[column.name]" [status]="data[column.name]"></app-status>
+        </ng-template>
+        <ng-template *ngSwitchCase="'priority'" #template let-data>
+          <app-priority *ngIf="data[column.name]" [priority]="data[column.name]" [slim]="true"></app-priority>
+        </ng-template>
+        <ng-template *ngSwitchCase="'user-badge'" #template let-data>
+          <app-user-badge [name]="data[column.name]"></app-user-badge>
+        </ng-template>
+        <ng-template *ngSwitchCase="'user-badges'" #template let-data>
+          <app-user-badge *ngFor="let user of data[column.name]" [name]="user"></app-user-badge>
+        </ng-template>
+        <ng-template *ngSwitchCase="'date'" #template let-data>
+          <span>{{ data[column.name] | date:"dd/MM/yyyy" }}</span>
+        </ng-template>
+        <ng-template *ngSwitchCase="'op'" #template let-data>
+          <button type="button" (click)="openContextMenu()">...</button>
+        </ng-template>
+      </div>
+    </e-column>
+  </e-columns>
+</ejs-grid>
